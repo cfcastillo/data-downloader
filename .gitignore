@@ -1,3 +1,4 @@
 .DS_Store
 /.idea
-/php/vendor
+php/vendor
+php/lib/configs.php
