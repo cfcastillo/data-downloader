@@ -65,9 +65,18 @@ class Business { //implements \JsonSerializable {
 	/**
 	 * @param mixed $businessName
 	 */
-	public function setBusinessName($businessName) {
+	public function setBusinessName($newBusinessName) {
 		//sanitize the data.
-		$this->businessName = $businessName;
+		$newBusinessName = filter_var($newBusinessName, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if(empty($newBusinessName) === true) {
+			throw(new \InvalidArgumentException("Business name is empty or insecure"));
+		}
+		//Just truncate and issue warning.
+		if(strlen($newBusinessName) > 128) {
+			throw(new \RangeException("Business name is longer than 128 characters"));
+		}
+
+		$this->businessName = $newBusinessName;
 	}
 
 	/**
@@ -80,9 +89,19 @@ class Business { //implements \JsonSerializable {
 	/**
 	 * @param mixed $businessYelpUrl
 	 */
-	public function setBusinessYelpUrl($businessYelpUrl) {
-		//ensure this is clean data - check for valid url.
-		$this->businessYelpUrl = $businessYelpUrl;
+	public function setBusinessYelpUrl($newBusinessYelpUrl) {
+		//TODO: ensure this is clean data - check for valid url.
+		try {
+			$newBusinessYelpUrl = filter_var($newBusinessYelpUrl, FILTER_VALIDATE_URL);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+				$exceptionType = get_class($exception);
+				throw(new $exceptionType($exception->getMessage(), 0, $exception));
+		}
+		if(strlen($newBusinessYelpUrl) > 255) {
+			throw(new \RangeException("Yelp url is longer than 255 characters"));
+		}
+
+		$this->businessYelpUrl = $newBusinessYelpUrl;
 	}
 
 	/**
@@ -95,9 +114,13 @@ class Business { //implements \JsonSerializable {
 	/**
 	 * @param mixed $businessYelpId
 	 */
-	public function setBusinessYelpId($businessYelpId) {
+	public function setBusinessYelpId($newBusinessYelpId) {
 		//ensure this is clean data.
-		$this->businessYelpId = $businessYelpId;
+
+		if(strlen($newBusinessYelpId) > 32) {
+			throw(new \RangeException("Yelp Id is longer than 32 characters."));
+		}
+		$this->businessYelpId = $newBusinessYelpId;
 	}
 
 	/**
@@ -110,9 +133,15 @@ class Business { //implements \JsonSerializable {
 	/**
 	 * @param mixed $businessLat
 	 */
-	public function setBusinessLat($businessLat) {
+	public function setBusinessLat($newBusinessLat) {
 		//ensure this is decimal data type
-		$this->businessLat = $businessLat;
+		try {
+			$newBusinessLat = filter_var($newBusinessLat, FILTER_VALIDATE_FLOAT);
+		} catch (\TypeError $exception) {
+			throw(new \TypeError("Business latitude value is an invalid data type"));
+		}
+
+		$this->businessLat = $newBusinessLat;
 	}
 
 	/**
@@ -125,9 +154,15 @@ class Business { //implements \JsonSerializable {
 	/**
 	 * @param mixed $businessLong
 	 */
-	public function setBusinessLong($businessLong) {
+	public function setBusinessLong($newBusinessLong) {
 		//ensure this is decimal data type
-		$this->businessLong = $businessLong;
+		try {
+			$newBusinessLong = filter_var($newBusinessLong, FILTER_VALIDATE_FLOAT);
+		} catch (\TypeError $exception) {
+			throw(new \TypeError("Business longitude value is an invalid data type"));
+		}
+
+		$this->businessLong = $newBusinessLong;
 	}
 
 	public function insert(\PDO $pdo) {
