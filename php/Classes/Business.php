@@ -11,7 +11,6 @@ use Ramsey\Uuid\Uuid;
  * @package CFiniello\DataDownloader
  */
 class Business { //implements \JsonSerializable {
-	use ValidateDate;
 	use ValidateUuid;
 
 	/**
