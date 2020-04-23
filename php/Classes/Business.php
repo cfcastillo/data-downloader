@@ -14,6 +14,7 @@ class Business { //implements \JsonSerializable {
 	use ValidateUuid;
 
 	/**
+	 * State variables
 	 * @var
 	 */
 	private $businessId;
@@ -23,8 +24,16 @@ class Business { //implements \JsonSerializable {
 	private $businessLat;
 	private $businessLong;
 
-
-	public function __construct($newBusinessId, $newBusinessName, $newBusinessYelpUrl, $newBusinessYelpId, $newBusinessLat, $newBusinessLong) {
+	/**
+	 * Business constructor.
+	 * @param string $newBusinessId
+	 * @param string $newBusinessName
+	 * @param string $newBusinessYelpUrl
+	 * @param string $newBusinessYelpId
+	 * @param float $newBusinessLat
+	 * @param float $newBusinessLong
+	 */
+	public function __construct(string $newBusinessId, string $newBusinessName, string $newBusinessYelpUrl, string $newBusinessYelpId, float $newBusinessLat, float $newBusinessLong) {
 		try {
 			$this->setBusinessId($newBusinessId);
 			$this->setBusinessName($newBusinessName);
@@ -38,6 +47,9 @@ class Business { //implements \JsonSerializable {
 		}
 	}
 
+	/**
+	 * @return Uuid
+	 */
 	public function getBusinessId() : Uuid{
 		return $this->businessId;
 	}
@@ -56,16 +68,16 @@ class Business { //implements \JsonSerializable {
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
-	public function getBusinessName() {
+	public function getBusinessName() : string {
 		return $this->businessName;
 	}
 
 	/**
-	 * @param mixed $businessName
+	 * @param string $newBusinessName
 	 */
-	public function setBusinessName($newBusinessName) {
+	public function setBusinessName(string $newBusinessName) {
 		//sanitize the data.
 		$newBusinessName = filter_var($newBusinessName, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 		if(empty($newBusinessName) === true) {
@@ -80,16 +92,16 @@ class Business { //implements \JsonSerializable {
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
-	public function getBusinessYelpUrl() {
+	public function getBusinessYelpUrl() : string {
 		return $this->businessYelpUrl;
 	}
 
 	/**
-	 * @param mixed $businessYelpUrl
+	 * @param string $newBusinessYelpUrl
 	 */
-	public function setBusinessYelpUrl($newBusinessYelpUrl) {
+	public function setBusinessYelpUrl( string $newBusinessYelpUrl) {
 		//TODO: ensure this is clean data - check for valid url.
 		try {
 			$newBusinessYelpUrl = filter_var($newBusinessYelpUrl, FILTER_VALIDATE_URL);
@@ -105,16 +117,16 @@ class Business { //implements \JsonSerializable {
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
-	public function getBusinessYelpId() {
+	public function getBusinessYelpId() : string {
 		return $this->businessYelpId;
 	}
 
 	/**
-	 * @param mixed $businessYelpId
+	 * @param string $businessYelpId
 	 */
-	public function setBusinessYelpId($newBusinessYelpId) {
+	public function setBusinessYelpId(string $newBusinessYelpId) {
 		//ensure this is clean data.
 
 		if(strlen($newBusinessYelpId) > 32) {
@@ -124,16 +136,16 @@ class Business { //implements \JsonSerializable {
 	}
 
 	/**
-	 * @return mixed
+	 * @return float
 	 */
-	public function getBusinessLat() {
+	public function getBusinessLat() : float {
 		return $this->businessLat;
 	}
 
 	/**
-	 * @param mixed $businessLat
+	 * @param float $businessLat
 	 */
-	public function setBusinessLat($newBusinessLat) {
+	public function setBusinessLat(float $newBusinessLat) {
 		//ensure this is decimal data type
 		try {
 			$newBusinessLat = filter_var($newBusinessLat, FILTER_VALIDATE_FLOAT);
@@ -145,16 +157,16 @@ class Business { //implements \JsonSerializable {
 	}
 
 	/**
-	 * @return mixed
+	 * @return float
 	 */
-	public function getBusinessLong() {
+	public function getBusinessLong() : float {
 		return $this->businessLong;
 	}
 
 	/**
-	 * @param mixed $businessLong
+	 * @param float $businessLong
 	 */
-	public function setBusinessLong($newBusinessLong) {
+	public function setBusinessLong(float $newBusinessLong) {
 		//ensure this is decimal data type
 		try {
 			$newBusinessLong = filter_var($newBusinessLong, FILTER_VALIDATE_FLOAT);
@@ -165,6 +177,10 @@ class Business { //implements \JsonSerializable {
 		$this->businessLong = $newBusinessLong;
 	}
 
+	/**
+	 * Insert a single record into the business table.
+	 * @param \PDO $pdo
+	 */
 	public function insert(\PDO $pdo) {
 		// create query template
 		$query = "INSERT INTO business(businessId, businessName, businessYelpUrl, businessYelpId, businessLat, businessLong) 
@@ -181,7 +197,13 @@ class Business { //implements \JsonSerializable {
 		$statement->execute($parameters);
 	}
 
-	public function getBusinessByBusinessId(\PDO $pdo, $businessId){
+	/**
+	 * Get a single record from the business table identified by businessId
+	 * @param \PDO $pdo
+	 * @param string $businessId
+	 * @return Business|null
+	 */
+	public function getBusinessByBusinessId(\PDO $pdo, string $businessId){
 		// sanitize the id before searching
 		try {
 			$businessId = self::validateUuid($businessId);
