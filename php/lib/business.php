@@ -10,19 +10,9 @@ require_once("/etc/apache2/capstone-mysql/Secrets.php");
 $secrets =  new Secrets("/etc/apache2/capstone-mysql/cohort28/cohort28testing.ini");
 $pdo = $secrets->getPdoObject();
 
-//use CFiniello\DataDownloader\Business;
-
-//this simulates the front end of a web site. This would actually come from HTML, Javascript, etc.
-//$businessId = generateUuidV4();
-$businessName = null;
-$businessYelpUrl = null;
-$businessYelpId = null;
-$businessLat = 0;
-$businessLong = 0;
-
 //cURL - https://www.php.net/manual/en/function.curl-setopt.php
+//$yelpToken is in a separate configs.php file that is not committed to github.
 $authorization = "Authorization: Bearer " . $yelpToken;
-
 
 for ($offset = 0; $offset < 100; $offset = $offset + 20) {
 
@@ -43,6 +33,6 @@ for ($offset = 0; $offset < 100; $offset = $offset + 20) {
         echo "<br>";
 
         $bus = new Business(generateUuidV4(), $business->name, $business->url, $business->id, $business->coordinates->latitude, $business->coordinates->longitude);
-        $bus->insert($pdo);
+        //$bus->insert($pdo);
     }
 }
